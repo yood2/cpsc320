@@ -334,7 +334,7 @@ int main() {
   cout << "Done.\n";
   cout << "mult1 time = " << duration << " seconds.\n\n";
 
-  /*
+
   cout << "Timing mult2...\n";
   t0 = std::clock();
   delete BigNum320::mult2(x,y);
@@ -342,7 +342,7 @@ int main() {
   duration = (t1-t0)/ (double) CLOCKS_PER_SEC;
   cout << "Done.\n";
   cout << "mult2 time = " << duration << " seconds.\n\n";
-  */
+
 
   /*
   cout << "Timing mult3...\n";
