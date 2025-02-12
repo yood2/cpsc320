@@ -256,24 +256,36 @@ public: // Super horrible kludge!  Make everything public for easy programming.
         BigNum320 *xl = bottomDigits(x,halfn);
         BigNum320 *yu = topDigits(y,halfn);
         BigNum320 *yl = bottomDigits(y,halfn);
-        // ----------------------------------------------------
-        // YOUR CODE GOES HERE.
-        // Do NOT make any changes outside of this one spot.
-        // (You are also allowed to make changes in main() for testing and
-        // timing.)
-        
-        // The next line is just a stub so the program will compile.
-        // Feel free to use it or discard it.
-        BigNum320 *result = new BigNum320(2*n);
 
-        // END OF YOUR CODE GOES HERE REGION
-        // Do not make changes after this point.
-        // ----------------------------------------------------
-        // Clean up memory allocted before the YOUR CODE HERE region.
+        // Recursive calls to get the 4 products of the halves:
+        BigNum320 *xuyu = mult3(xu,yu);
+        BigNum320 *xlyl = mult3(xl,yl);
+        
+        // 
+        BigNum320 *xuxl = add(xu, xl);
+        BigNum320 *yuyl = add(yu, yl);
+        BigNum320 *step1 = mult3(xuxl, yuyl);
+        BigNum320 *step2 = sub(step1, xuyu);
+        BigNum320 *xuylxlyu = sub(step2, xlyl);
+
+        // Prepare to add up the various partial products
+        BigNum320 *result = new BigNum320(2*n);
+        shiftAccumulate(xlyl,0,result);
+        shiftAccumulate(xuylxlyu,halfn,result);
+        shiftAccumulate(xuyu,2*halfn,result);
+
+        // Clean up memory.
         delete xu;
         delete xl;
         delete yu;
         delete yl;
+        delete xuyu;
+        delete xlyl;
+        delete xuylxlyu;
+        delete xuxl;
+        delete yuyl;
+        delete step1;
+        delete step2;
 
         return result;
     }
@@ -312,19 +324,17 @@ int main() {
   delete z;
   */
 
-  /*
-  cout << "Testing multiplication functions...\n";
-  BigNum320 *result1 = BigNum320::mult1(x,y);
-  BigNum320 *result2 = BigNum320::mult2(x,y);
-  if (result1->digits == result2->digits) cout << "mult2 PASSES.\n\n";
-  else cout << "mult2 FAILS.\n\n";
-  BigNum320 *result3 = BigNum320::mult3(x,y);
-  if (result1->digits == result3->digits) cout << "mult3 PASSES.\n\n";
-  else cout << "mult3 FAILS.\n\n";
-  delete result1;
-  delete result2;
-  delete result3;
-  */
+//   cout << "Testing multiplication functions...\n";
+//   BigNum320 *result1 = BigNum320::mult1(x,y);
+//   BigNum320 *result2 = BigNum320::mult2(x,y);
+//   if (result1->digits == result2->digits) cout << "mult2 PASSES.\n\n";
+//   else cout << "mult2 FAILS.\n\n";
+//   BigNum320 *result3 = BigNum320::mult3(x,y);
+//   if (result1->digits == result3->digits) cout << "mult3 PASSES.\n\n";
+//   else cout << "mult3 FAILS.\n\n";
+//   delete result1;
+//   delete result2;
+//   delete result3;
 
   cout << "Timing mult1...\n";
   auto t0 = std::clock();
@@ -343,8 +353,6 @@ int main() {
   cout << "Done.\n";
   cout << "mult2 time = " << duration << " seconds.\n\n";
 
-
-  /*
   cout << "Timing mult3...\n";
   t0 = std::clock();
   delete BigNum320::mult3(x,y);
@@ -352,7 +360,6 @@ int main() {
   duration = (t1-t0)/ (double) CLOCKS_PER_SEC;
   cout << "Done.\n";
   cout << "mult3 time = " << duration << " seconds.\n\n";
-  */
 
   delete x;
   delete y;
